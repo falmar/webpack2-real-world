@@ -2,6 +2,8 @@ var webpack = require('webpack')
 var path = require('path')
 var HTMLWebpackPlugin = require('html-webpack-plugin')
 
+var production = process.env.NODE_ENV === 'production'
+
 var VENDOR_LIBS = [
   'faker',
   'lodash',
@@ -14,6 +16,28 @@ var VENDOR_LIBS = [
   'redux-form',
   'redux-thunk'
 ]
+
+var plugins = [
+  new webpack.optimize.CommonsChunkPlugin({
+    names: ['vendor', 'manifest']
+  }),
+  new HTMLWebpackPlugin({
+    template: './src/index.html'
+  })
+]
+
+if (production) {
+  plugins = plugins.concat([
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      mangle: false,
+      sourcemap: false,
+      compress: {
+        warnings: false
+      }
+    })
+  ])
+}
 
 module.exports = {
   entry: {
@@ -34,12 +58,5 @@ module.exports = {
       test: /\.css/
     }]
   },
-  plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['vendor', 'manifest']
-    }),
-    new HTMLWebpackPlugin({
-      template: './src/index.html'
-    })
-  ]
+  plugins: plugins
 }
