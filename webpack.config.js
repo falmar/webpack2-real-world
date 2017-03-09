@@ -32,5 +32,10 @@ module.exports = {
       use: ['style-loader', 'css-loader'],
       test: /\.css/
     }]
-  }
+  },
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor'
+    })
+  ]
 }
